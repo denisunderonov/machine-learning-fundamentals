@@ -75,7 +75,7 @@ How to work with the project:
 * No imports are allowed except those mentioned in the "Authorized Functions" section of the title block of each exercise.
 * You can use any built-in function as long as it is not prohibited by the exercise.
 * Save and load all the required data to the subfolder data/.
-* `scikit-learn` (0.23.1) is the library that you need for all the machine learning tasks.
+* `scikit-learn` is the library that you need for all the machine learning tasks.
 
 ## Chapter IV
 
