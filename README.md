@@ -1,181 +1,220 @@
 # Intro to Machine Learning
 
-Summary: Today we will help you with basic tasks involved in machine learning in
-Python.
+**Практический проект по машинному обучению: от логистической регрессии до кластеризации.**
 
-💡 [Tap here](https://new.oprosso.net/p/4cb31ec3f47a4596bc758ea1861fb624) **to leave your feedback on the project**. It's anonymous and will help our team make your educational experience better. We recommend completing the survey immediately after the project.
+В этом проекте я работал с данными об учебной активности пользователей: временем отправки решений, количеством попыток, коммитами и просмотрами новостной ленты. На этих данных я последовательно решал три задачи: определял класс объекта, предсказывал числовое значение и искал группы похожих пользователей.
 
-## Contents
+Работа состоит из шести Jupyter Notebook. В каждом упражнении я добавлял следующий элемент рабочего процесса: подготовку признаков, обучение, визуализацию, проверку качества или подбор параметров. Поэтому репозиторий показывает не только финальные модели, но и то, как я учился понимать их поведение.
 
-1. [Chapter I](#chapter-i) \
-    1.1. [Foreword](#foreword)
-2. [Chapter II](#chapter-ii) \
-    2.1. [Instructions](#instructions)
-3. [Chapter III](#chapter-iii) \
-    3.1. [Specific instructions for the day](#specific-instructions-for-the-day)
-4. [Chapter IV](#chapter-iv) \
-    4.1. [Exercise 00: Binary classifier](#exercise-00-binary-classifier)
-5. [Chapter V](#chapter-v) \
-    5.1. [Exercise 01: Decision boundaries](#exercise-01-decision-boundaries)
-6. [Chapter VI](#chapter-vi) \
-    6.1. [Exercise 02: Multiclass](#exercise-02-multiclass)
-7. [Chapter VII](#chapter-vii) \
-    7.1. [Exercise 03: Overfitting](#exercise-03-overfitting)
-8. [Chapter VIII](#chapter-viii) \
-    8.1. [Exercise 04: Regression](#exercise-04-regression)
-9. [Chapter IX](#chapter-ix) \
-    9.1. [Exercise 05: Clustering](#exercise-05-clustering)
-    
-   
-## Chapter I
+**Стек:** Python · pandas · NumPy · Matplotlib · scikit-learn · joblib · Jupyter Notebook.
 
-### Foreword
+## Содержание
 
-- There are many terms connected to the field of data, such as artificial intelligence, machine learning, neural networks, and deep learning. Do you know the difference between them?
-- Each item on the list is a subset of the previous one. The broadest term, artificial intelligence, includes any techniques that mimic human cognitive behavior. This can be done using machine learning algorithms or other techniques, such as writing a program with many "if-then-else" rules.
-- Machine learning includes statistical algorithms that automate the process of creating rules. Machines can find correlations and use them for different tasks by "looking" at the data.
-- Neural networks are a subset of machine learning algorithms. They were inspired by how the human brain works, but they are still far from it. Deep learning algorithms are a subset of neural nets. They usually have many layers. That is why they are called "deep".
-- Remember that none of these algorithms are limitless. They can only help you if you have the data. Simple algorithms can be satisfied with small amounts of data, while deep learning algorithms require large amounts. At the same time, if your data is poor, the knowledge you get from the algorithms will be poor, too. No surprise, huh?
+- [Маршрут проекта](#маршрут-проекта)
+- [Данные](#данные)
+- [Что я делал](#что-я-делал)
+  - [Ex00 — первый бинарный классификатор](#ex00--первый-бинарный-классификатор)
+  - [Ex01 — масштабирование и границы решений](#ex01--масштабирование-и-границы-решений)
+  - [Ex02 — семь классов и категориальные признаки](#ex02--семь-классов-и-категориальные-признаки)
+  - [Ex03 — проверка на новых данных](#ex03--проверка-на-новых-данных)
+  - [Ex04 — предсказание числового значения](#ex04--предсказание-числового-значения)
+  - [Ex05 — поиск групп пользователей](#ex05--поиск-групп-пользователей)
+- [Что я вынес из проекта](#что-я-вынес-из-проекта)
+- [Как читать результаты](#как-читать-результаты)
+- [Структура репозитория](#структура-репозитория)
+- [Как запустить](#как-запустить)
 
-## Chapter II
+## Маршрут проекта
 
-### Instructions
+| Упражнение | Задача | С чем я работал |
+|---|---|---|
+| [Ex00](src/ex00/00_binary_classifier_logreg_RU.ipynb) | Определить, рабочий день или выходной | Даты, агрегация, `LogisticRegression`, наивный классификатор |
+| [Ex01](src/ex01/01_binary_classifier_svm_tree_RU.ipynb) | Сравнить границы разных классификаторов | `StandardScaler`, `SVC`, `DecisionTreeClassifier`, `plot_tree` |
+| [Ex02](src/ex02/02_multiclass_one-hot_RU.ipynb) | Предсказать один из семи дней недели | `OneHotEncoder`, `OneVsRestClassifier`, `RandomForestClassifier`, важность признаков |
+| [Ex03](src/ex03/03_split_crossval_RU.ipynb) | Оценить модели на новых данных | `train_test_split`, стратификация, `cross_val_score`, сохранение модели |
+| [Ex04](src/ex04/04_regression_RU.ipynb) | Предсказать среднюю разницу между первым коммитом и дедлайном | Линейная регрессия, дерево, случайный лес, `KFold`, RMSE |
+| [Ex05](src/ex05/05_clustering_RU.ipynb) | Объединить похожих пользователей без готовых ответов | `KMeans`, `DBSCAN`, `AgglomerativeClustering`, silhouette score |
 
-How to learn at “School 21”:
+## Данные
 
-- Here, you’ll find a unique learning experience with a lot of freedom. You’re given a task and left to find your own way to solve it, using whatever resources work best for you — whether that’s the Internet or AI tools like GigaChat. Just be mindful of information quality: verify, think critically, analyze, and compare.
-- Peer-to-peer (P2P) learning is the exchange of knowledge and experience with peers, where everyone acts as both mentor and student. This approach allows you to gain a deeper understanding of the material by learning from one another.
-- Feel free to ask for help: around you are peers who are also navigating this path for the first time. Share your own experience and ideas with others.  Join Rocket.Chat to stay updated with the latest community announcements. 
-- Your learning is meaningless if you just copy someone else’s solutions. When receiving help from others, always make sure you fully understand the “why”, “how”, and “purpose” behind the solution. Don’t be afraid to make mistakes. 
-- Does the task seem impossible? Take a break, get some fresh air and clear your mind — this has helped many people. Maybe after that, the solution will come to you naturally.
-- The learning process is just as important as the result. It’s not just about completing the task — it’s about understanding HOW to solve it. 
+Исходные данные и часть подготовленных таблиц находятся в [src/data](src/data). Пользователи представлены идентификаторами вида `user_1`.
 
-How to work with the project:
+| Файл | Количество строк | Для чего использовался |
+|---|---:|---|
+| [`checker_timestamp.csv`](src/data/checker_timestamp.csv) | 3 207 | Временные отметки отправок; подготовка дневной статистики |
+| [`am_pm.csv`](src/data/am_pm.csv) | 35 | Коммиты до и после полудня, тип дня и предсказания первой модели |
+| [`checker_submits.csv`](src/data/checker_submits.csv) | 1 686 | Пользователь, лабораторная работа, номер попытки и время отправки |
+| [`dayofweek.csv`](src/ex02/dayofweek.csv) | 1 686 | Признаки после кодирования и масштабирования; входные данные Ex03 |
+| [`checker_regression.csv`](src/data/checker_regression.csv) | 77 | Данные для задачи регрессии, включая пропущенные значения |
+| [`regression.csv`](src/data/regression.csv) | 29 | Пользователи для задачи кластеризации |
 
-* Use this page as your only reference. Do not pay attention to rumors or speculation about how to prepare your solution.
-* Here and throughout, we use Python 3 as the only correct version of Python.
-* The python files for python exercises (module01, module02, module03) must have the following block at the end: `if __name__ == ‘__main__’`.
-* Pay attention to the permissions of your files and directories.
-* To be assessed your solution must be in your GIT repository.
-* Your solutions will be evaluated by your peers in the bootcamp.
-* You should not leave any other files in your directory other than those explicitly specified in the exercise instructions. It is recommended that you modify your .gitignore to avoid any accidents.
-* Your solution must be in your GIT repository for evaluation. Always push only to the develop branch! The master branch will be ignored. Work in the src directory.
-* When you need to get precise output in your programs, it is forbidden to display a precalculated output instead of performing the exercise correctly.
-* Have a question? Ask your neighbor on the right. If that fails, try your neighbor on the left.
-* Your reference materials are your peers, the internet, and Google.
-* Read the examples carefully. They may require information that is not specified elsewhere in the subject.
-* May the Force be with you!
+В разных упражнениях одна строка означает разные объекты: в Ex00–Ex01 это день, в Ex02–Ex03 — отдельная отправка решения, а в Ex05 — пользователь. Регрессия в Ex04 использует отдельную таблицу из 77 строк.
 
-## Chapter III
+## Что я делал
 
-### Specific instructions for the day
+### Ex00 — первый бинарный классификатор
 
-* Use the Jupyter notebook to work with your code.
-* For each major subtask in the list of exercises, your ipynb file should have an H2 heading to help your peers easily navigate your code.
-* No imports are allowed except those mentioned in the "Authorized Functions" section of the title block of each exercise.
-* You can use any built-in function as long as it is not prohibited by the exercise.
-* Save and load all the required data to the subfolder data/.
-* `scikit-learn` is the library that you need for all the machine learning tasks.
+Первую модель я обучал определять, относится день к рабочим дням или к выходным. Из временных отметок я выделил дату и час, затем сгруппировал отправки по дням и получил два признака:
 
-## Chapter IV
+- `am` — количество коммитов до 12:00;
+- `pm` — количество коммитов начиная с 12:00.
 
-### Exercise 00: Binary classifier
+Целевая переменная `target` принимала значения `working day` и `weekend`. Сначала я построил scatter plot с настоящими классами: он показал, что группы заметно пересекаются и двух признаков недостаточно для очевидного разделения.
 
-- Turn-in directory: `ex00/`.
-- Files to turn in: `00_binary_classifier_logreg.ipynb`.
-- Allowed functions: no restrictions.
+![Распределение рабочих дней и выходных по количеству коммитов](misc/images/readme/01-days-actual.png)
 
-Today and the following day, you will work with machine learning. Today, we will cover the basics to help you avoid feeling overwhelmed by too much information. The next day, we will cover more sophisticated techniques. Stay tuned!
+Затем я обучил `LogisticRegression(random_state=21, fit_intercept=False)`, получил предсказания и сравнил accuracy с простым ориентиром — всегда выбирать самый частый класс.
 
-First, machine learning can be divided into supervised and unsupervised learning. In supervised learning, you want to make predictions. To do so, you provide the machine with examples, including a set of features and a target variable. For example, imagine that you want to predict whether a user would like or dislike a given movie. The features (X) could include genre, year of release, budget, cast, and director. The target variable (y) would be whether the user likes or dislikes the movie. This type of task is called a classification task. In classification problems, y is always categorical. If your target variable is continuous, such as a movie rating, it is called a regression problem.
+| Подход | Accuracy на тех же данных, на которых обучалась модель |
+|---|---:|
+| Логистическая регрессия | 62,86% |
+| Всегда предсказывать рабочий день | 71,43% |
 
-Unsupervised learning does not require a target variable. It does not make forecasts. It usually helps you understand your data better. Clustering algorithms, for example, help you identify homogeneous groups of observations. You may find that you can divide your users into six groups. Then, you can create a special offer or recommendation for each group. Do not confuse this with classification. You are not trying to make predictions. You are simply examining your data.
+Этот результат стал первым полезным выводом: обученная модель может уступать простому правилу. Одной цифры accuracy недостаточно — нужен хотя бы базовый вариант для сравнения.
 
-In addition to clustering algorithms, unsupervised learning includes dimensionality reduction algorithms. These algorithms help reduce the number of features or observations. This may be helpful if you have a lot of features or observations but insufficient resources. They may also help you find latent features and improve the quality of your supervised learning algorithms.
+### Ex01 — масштабирование и границы решений
 
+В следующем упражнении я разбирался, как классификаторы разделяют пространство признаков. Для логистической регрессии без свободного члена я получил границу из коэффициентов модели:
 
-But enough theory! Let's try training our first classifier. It will be a binary classifier, meaning the target variable has only two unique values. You will work with the dataset from the previous day. That's perfectly normal. In fact, that's how data science works. First, you perform descriptive analysis, then you analyze some basic statistics. Then, you perform exploratory analysis by creating different plots to gain a better understanding of your data. Only then do you move on to predictive analysis to make forecasts.
+```text
+w_am · am + w_pm · pm = 0
+pm = −(w_am / w_pm) · am
+```
 
-For this exercise, imagine the following common situation (which is, by the way, quite common). At some point, you realized that the more data you collect, the better.
+После применения `StandardScaler` я повторно обучил модель и построил границу уже в масштабированных координатах. В этом эксперименте accuracy выросла с **62,86% до 74,29%**. Обе оценки получены на обучающих данных.
 
-You started saving more fields in the logs. Before, you only collected the time of the commit. But from that point on, you started collecting the date as well.
+Дальше я попробовал `SVC` с ядрами `linear`, `rbf`, `poly`, `sigmoid` и дерево решений с разными значениями `max_depth`. Для каждой модели я сравнивал график настоящих классов с графиком предсказаний.
 
-Now, you need to train a classifier that can predict whether a commit was made during the week or on the weekend. Then, you can use the classifier to label commits from the past, when you weren't collecting data.
+| Логистическая регрессия после стандартизации | SVC с RBF-ядром | Дерево решений |
+|---|---|---|
+| ![Линейная граница логистической регрессии](misc/images/readme/02-logistic-boundary.png) | ![Нелинейная граница SVC](misc/images/readme/03-svc-boundary.png) | ![Граница дерева решений](misc/images/readme/04-tree-boundary.png) |
 
-Every supervised machine learning algorithm requires at least two arguments: X, the list of features, and y, the target column. But what are the features?
+На этих трёх графиках показаны настоящие классы: синим отмечены рабочие дни, оранжевым — выходные. Координаты соответствуют стандартизированным `am` и `pm`, чёрная линия — границе решений модели.
 
-As you may recall, we only have logs such as 2020-04-17 05:19:02.744528. How can we use these to predict the day of the week? That is the creative part of the work. It's called feature engineering. You need to extract these features from the logs. What could they be? Remember, the observation in this task is a day. So, we need to extract something that characterizes days. What could that be? One possibility is the number of commits during the day. It could also be the number of commits before and after midday. It could also be the percentage of commits made before midday. You are only limited by your imagination!
+Графики помогли связать устройство алгоритма с его результатом: логистическая регрессия строит прямую, SVC с нелинейным ядром — более гибкую границу, а дерево делит пространство порогами по отдельным признакам.
 
-For this exercise, we will use a simple approach with two features: the number of commits before and after midday.
+При увеличении глубины дерева с 4 до 6 accuracy на обучающей выборке выросла с **94,29% до 100%**. Позже, в Ex03, я отдельно проверял, почему такой результат ещё не доказывает качество на новых данных.
 
-* What you need to do is fully explained in the [notebook](https://drive.google.com/file/d/10X-v79bBGWFZ-Qo2W_59WR-yE6pqI-jD/view).
+Я также визуализировал само дерево через `plot_tree`: в узлах можно увидеть условие разделения, количество наблюдений, состав классов и итоговое решение.
 
-## Chapter V
+<details>
+<summary>Посмотреть дерево решений</summary>
 
-### Exercise 01: Decision boundaries
+![Дерево решений с условиями разделения и классами в листьях](misc/images/readme/05-decision-tree.png)
 
-- Turn-in directory: `ex01/`.
-- Files to turn in: `01_binary_classifier_svm_tree.ipynb`.
-- Allowed functions: no restrictions.
+</details>
 
-Okay, you've trained your first classifier! It probably seems like magic to you now. Let's take a look under the hood, try to improve your classifier's quality, and experiment with other algorithms.
+### Ex02 — семь классов и категориальные признаки
 
-In this exercise, you will learn how logistic regression works. You will also try two more machine learning algorithms: SVM and the decision tree. You will also visualize them.
+Здесь я перешёл от двух классов к семи: модель должна была предсказывать день недели отправки решения. Признаками стали пользователь, лабораторная работа, час отправки и номер попытки.
 
-* What you need to do is fully explained in the [notebook](https://drive.google.com/file/d/1DIaOKYrSUlFRv05dZi4B71t4YEKS3ISd/view).
+Я преобразовал `timestamp` в дату pandas, выделил `hour` и `dayofweek`, закодировал `uid` и `labname` через `OneHotEncoder`, а числовые признаки `hour` и `numTrials` масштабировал. После подготовки получилось **43 признака** и отдельный столбец с целевым классом от 0 до 6.
 
-## Chapter VI
+На этих данных я сравнил логистическую регрессию, SVC, дерево решений и случайный лес. Также попробовал стратегию `OneVsRestClassifier`: отдельный бинарный классификатор для каждого дня недели против всех остальных дней.
 
-### Exercise 02: Multiclass
+Для интерпретации моделей я написал функцию `barh`, которая выбирает наиболее значимые признаки и строит горизонтальную столбчатую диаграмму. Для линейных моделей я использовал сумму модулей коэффициентов по классам, для деревьев и леса — `feature_importances_`. Это разные способы описания модели, поэтому их значения нельзя напрямую сравнивать между собой.
 
-- Turn-in directory: `ex02/`.
-- Files to turn in: `02_multiclassi_one-hot.ipynb`.
-- Allowed functions: no restrictions.
+При большой глубине дерево и случайный лес достигли **100% accuracy на обучающих данных**. Именно этот результат стал отправной точкой следующего упражнения: нужно было проверить, что происходит с качеством на примерах, которых модель ещё не видела.
 
-Okay, now you have a general understanding of how different algorithms make classifications. Now, it's time to get closer to a real-life scenario. In real life, your target column may contain more than two values. In such cases, you will need to train a multiclass classifier, not a binary classifier (do not confuse the second one; we're talking about situations in which your observations can belong to several classes at the same time).
+### Ex03 — проверка на новых данных
 
-Also, you may have categorical features as well as continuous ones. You will need to deal with them somehow. Algorithms understand numbers; they don't know what to do with text.
+Я разделил данные на обучающую и тестовую части в отношении **80/20**: 1 348 строк для обучения и 338 для проверки. Сначала посмотрел на обычное случайное разбиение, затем использовал `stratify=y`, чтобы сохранить близкие доли семи классов в обеих частях.
 
-In this exercise, you will address both issues. You will also determine which features are most important to different algorithms. You will also try one more algorithm: random forest.
+После этого я повторил обучение моделей и оценил предсказания на тесте. Для проверки устойчивости результатов использовал `cross_val_score` с десятью фолдами внутри обучающей части.
 
-* What you need to do is described in full detail in the [notebook](https://drive.google.com/file/d/1R0nISlChrzwuca1OZzQIrOvlV1ZPFehq/view).
+| Модель | Accuracy на тесте | Средняя accuracy на CV | Стандартное отклонение CV |
+|---|---:|---:|---:|
+| Логистическая регрессия¹ | 63,31% | 58,16% | 0,0253 |
+| SVC, `kernel="linear"` | 71,60% | 65,87% | 0,0436 |
+| Дерево, `max_depth=4` | 52,96% | 50,89% | 0,0319 |
+| Случайный лес, 100 деревьев, `max_depth=25` | **92,90%** | **91,77%** | 0,0216 |
 
-Isn’t it cool that we can predict the weekday of any commit with high accuracy, knowing who made it, when, for which lab, and how many tries were made?
+¹ В тестовом сравнении использована обычная `LogisticRegression`, а в CV — `OneVsRestClassifier` с логистической регрессией и `solver="liblinear"`. Это разные настройки; их оценки приведены как отдельные эксперименты из ноутбука.
 
-## Chapter VII
+Лучшим из проверенных вариантов оказался случайный лес. Для него я построил диаграмму десяти наиболее важных признаков, сохранил обученную модель через `joblib`, загрузил её обратно и повторил предсказание. После загрузки accuracy осталась прежней — **92,90%**.
 
-### Exercise 03: Overfitting
+![Десять наиболее важных признаков финального случайного леса](misc/images/readme/06-forest-feature-importance.png)
 
-- Turn-in directory: `ex03/`.
-- Files to turn in: `03_split_crossval.ipynb`.
-- Allowed functions: no restrictions.
+### Ex04 — предсказание числового значения
 
-We are confident that you achieved a high level of accuracy. However, those numbers are somewhat unfair. Why? You made predictions using the same data you used for training. Your models could have simply memorized all the observations. In theory, you could achieve 100% accuracy, but would your model be useful if it tried to predict data it hadn't seen? We highly doubt it. This is called overfitting.
+В регрессии я сменил тип задачи: вместо класса нужно было предсказывать число — `AVG(diff)`, среднюю разницу между первым коммитом и дедлайном. Признаками стали количество коммитов `num_commits` и просмотров ленты `pageviews`; идентификатор пользователя я исключил из `X`.
 
-One technique to prevent overfitting is to create a train/test split. You use one portion of the data for training and another to check the final quality of your model. Another technique is cross-validation. With this technique, we don't make a constant split; rather, we try different splits and see what quality of predictions we get.
+По условию упражнения я заполнил пропуски нулями, затем разделил 77 строк на **61 обучающую и 16 тестовых**. Для проверки моделей написал собственную функцию `crossval` на основе `KFold`:
 
-* What you need to do is described in full detail in the [notebook](https://drive.google.com/file/d/190B3pI6DukYeWBHpfBuW1epTCzUCRA5L/view).
+1. Получить индексы обучающей и валидационной частей каждого фолда.
+2. Выбрать соответствующие строки `X` и `y` через `.iloc`.
+3. Обучить модель и сделать предсказания для обеих частей.
+4. Вычислить RMSE и вывести среднюю ошибку по валидационным фолдам.
 
-## Chapter VIII
+Я сравнил три модели, затем заново обучил каждую на всей обучающей части перед финальной проверкой.
 
-### Exercise 04: Regression
+| Модель | Средняя RMSE на 10 фолдах | RMSE на тесте |
+|---|---:|---:|
+| `LinearRegression(fit_intercept=False)` | 42,29 | 57,41 |
+| `DecisionTreeRegressor(max_depth=4)` | 38,55 | 52,21 |
+| `RandomForestRegressor(n_estimators=100, max_depth=4)` | **30,14** | **40,46** |
 
-- Turn-in directory: `ex04/`.
-- Files to turn in: `04_regression.ipynb`.
-- Allowed functions: no restrictions.
+**Чем меньше RMSE, тем лучше.** В этих экспериментах наименьшая ошибка получилась у случайного леса.
 
-Now that you know a thing or two about classification tasks, let's work on a regression problem. In this exercise, let's work on a regression problem. Using data about their views of the newsfeed and the number of commits they made during the program, you will need to predict the average delta between the deadlines and the first commit for every user.
+Для каждой модели я построил график «фактическое значение — предсказание». Красная пунктирная прямая `y = x` показывает идеальный прогноз: чем ближе к ней точка, тем меньше ошибка для соответствующего наблюдения.
 
-* What you need to do is described in full detail in the [notebook](https://drive.google.com/file/d/1Dog5RO7ViNlLSowPbUAd8LiTIUOh05CZ/view).
+| Линейная регрессия | Дерево решений | Случайный лес |
+|---|---|---|
+| ![Фактические значения и прогноз линейной регрессии](misc/images/readme/07-regression-linear.png) | ![Фактические значения и прогноз дерева](misc/images/readme/08-regression-tree.png) | ![Фактические значения и прогноз случайного леса](misc/images/readme/09-regression-forest.png) |
 
-## Chapter IX
+### Ex05 — поиск групп пользователей
 
-### Exercise 05: Clustering
+Последнее упражнение — обучение без учителя. Здесь готовых ответов `y` уже нет: я искал группы пользователей, похожих по количеству коммитов и средней разнице `AVG(diff)`. Для этого использовал отдельную таблицу из 29 пользователей, исключив `pageviews` и не включая `uid` в признаки.
 
-- Turn-in directory: `ex05/`.
-- Files to turn in: `05_clustering.ipynb`.
-- Allowed functions: no restrictions.
+Я попробовал три алгоритма:
 
-It is time to try using unsupervised machine learning. This time, we will work with clustering algorithms. Our goal is to determine if we can categorize our users into homogeneous groups for future analysis. Perhaps we can add more triggers or engaging mechanics for them. However, the triggers and mechanics may differ depending on the users' existing behavior.
+- **KMeans** — распределяет точки по заданному количеству кластеров, уточняя их центры.
+- **DBSCAN** — объединяет плотные области и может помечать отдельные точки как шум, `-1`.
+- **AgglomerativeClustering** — постепенно объединяет отдельные точки и группы до нужного количества кластеров.
 
-* What you need to do is described in full detail in the [notebook](https://drive.google.com/file/d/1SgbuTFWjJykYYV9HFRFd_iLrOZi0kUQy/view).
+Сначала я менял параметры вручную и смотрел, как меняется разбиение. Затем написал общую функцию `vizscore`, которая принимает класс модели, словарь параметров, название изменяемого параметра и диапазон его значений.
+
+Функция обучает модель для каждого значения, вычисляет `silhouette_score`, сохраняет лучшее разбиение и возвращает два подграфика: зависимость оценки от параметра и scatter plot с лучшими найденными кластерами. Если оценку вычислить нельзя, вариант пропускается; если подходящих вариантов нет, функция возвращает `None`.
+
+| Модель | Проверенный диапазон | Лучший параметр в этом диапазоне | Silhouette score |
+|---|---|---|---:|
+| KMeans, `random_state=21` | `n_clusters`: от 2 до 10 | `n_clusters=8` | 0,4864 |
+| DBSCAN, `min_samples=2` | `eps`: от 5 до 60 с шагом 5 | `eps=20` | 0,3834 |
+| AgglomerativeClustering | `n_clusters`: от 2 до 10 | `n_clusters=8` | **0,5078** |
+
+В этом сравнении наибольший silhouette score получился у иерархической кластеризации с восемью кластерами. Это результат перебора на выбранных признаках и диапазонах, а не доказательство того, что существует ровно восемь естественных групп пользователей.
+
+![Подбор количества кластеров и лучшее разбиение AgglomerativeClustering](misc/images/readme/12-agglomerative-search.png)
+
+<details>
+<summary>Посмотреть подбор параметров KMeans и DBSCAN</summary>
+
+**KMeans:** сверху — оценка для разного количества кластеров, снизу — разбиение при `n_clusters=8`.
+
+![Подбор количества кластеров KMeans](misc/images/readme/10-kmeans-search.png)
+
+**DBSCAN:** сверху — изменение оценки при разных `eps`, снизу — результат при `eps=20` и `min_samples=2`.
+
+![Подбор радиуса соседства DBSCAN](misc/images/readme/11-dbscan-search.png)
+
+</details>
+
+## Структура репозитория
+
+```text
+.
+├── README.md
+├── LICENSE
+├── misc/
+│   └── images/readme/          # 12 графиков для этой страницы
+└── src/
+    ├── data/                  # Исходные и подготовленные CSV
+    ├── ex00/                  # Бинарная логистическая регрессия
+    ├── ex01/                  # Стандартизация, SVC, дерево и границы
+    ├── ex02/                  # Мультиклассовая классификация
+    │   └── dayofweek.csv      # Подготовленные признаки для Ex03
+    ├── ex03/                  # Train/test, CV, выбор модели
+    │   └── ranfmodel.joblib    # Сохранённый случайный лес
+    ├── ex04/                  # Регрессия и собственная crossval
+    └── ex05/                  # Кластеризация и функция vizscore
+```
